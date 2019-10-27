@@ -48,24 +48,4 @@ abstract class BaseFragment : Fragment() {
         showAlertDialog(activity!!, "Info", errorMessage)
     }
 
-//    fun handleError(throwable: Throwable?, isConnected: Boolean){
-//
-//        var errorMessage = getString(R.string.error_common)
-//
-//        if (!isConnected) {
-//            errorMessage = activity!!.getString(R.string.error_no_connection)
-//        } else {
-//            when (throwable) {
-//                is ConnectException -> {
-//                    errorMessage = activity!!.getString(R.string.error_failed_to_connect_to_server)
-//                }
-//                is TimeoutException -> {
-//                    errorMessage = activity!!.getString(R.string.error_timeout)
-//                }
-//                is SocketTimeoutException -> {
-//                    errorMessage = activity!!.getString(R.string.error_timeout)
-//                }
-//            }
-//        }
-//    }
 }

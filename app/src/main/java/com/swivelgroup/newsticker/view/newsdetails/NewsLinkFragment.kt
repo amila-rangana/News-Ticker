@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.swivelgroup.newsticker.R
 import com.swivelgroup.newsticker.databinding.FragmentNewsLinkBinding
 import com.swivelgroup.newsticker.utils.Constants
+import com.swivelgroup.newsticker.utils.LoaderWebView
 import kotlinx.android.synthetic.main.fragment_news_link.*
 
 
@@ -35,6 +36,7 @@ class NewsLinkFragment : Fragment() {
             val newsUrl = arguments?.getString(Constants.extra_news_url, "")
             webViewNews.loadUrl(newsUrl)
             webViewNews.settings.javaScriptEnabled = true
+            webViewNews.webViewClient = LoaderWebView(progressBar, newsUrl!!)
         }
     }
 }

@@ -26,10 +26,11 @@ class HeadLineViewModel : ViewModel() {
         path: String,
         query: String,
         country: String,
-        category: String): LiveData<NewsBaseResponse>{
+        category: String,
+        page: Int): LiveData<NewsBaseResponse>{
 
         val dataSource = newsRepository.getHeadLineNewsList(
-            token, path, query, country, category)
+            token, path, query, country, category, page)
 
         liveNewsBaseResponse.addSource(dataSource) { notificationData ->
             if (liveNewsBaseResponse.hasActiveObservers()) {

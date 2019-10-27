@@ -3,19 +3,18 @@ package com.swivelgroup.newsticker.view.home.headlinenews
 import android.content.Intent
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.swivelgroup.newsticker.R
 import com.swivelgroup.newsticker.databinding.HeadLineFragmentBinding
 import com.swivelgroup.newsticker.model.NewsItem
 import com.swivelgroup.newsticker.utils.Constants
 import com.swivelgroup.newsticker.utils.isConnected
-import com.swivelgroup.newsticker.utils.showAlertDialog
 import com.swivelgroup.newsticker.view.base.BaseFragment
 import com.swivelgroup.newsticker.view.home.NewsListRecyclerViewAdapter
 import com.swivelgroup.newsticker.view.newsdetails.NewsDetailsActivity
@@ -32,6 +31,11 @@ class HeadLineFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickList
 
     lateinit var containerView: View
     private lateinit var viewModel: HeadLineViewModel
+    private var isLoading = false
+    private var isFinished = false
+    private var page = 1
+
+    private var newsFullList = ArrayList<NewsItem>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,20 +55,56 @@ class HeadLineFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickList
         super.onViewCreated(view, savedInstanceState)
 
         setObservers()
+        initAdapter()
+        initScrolling()
         loadNewsList()
 
         swipeToRefreshView.setOnRefreshListener {
             if (swipeToRefreshView.isRefreshing) {
+                page = 1
+                newsFullList.clear()
                 loadNewsList()
             }
         }
     }
 
+    private fun initAdapter(){
+        val newsAdapter = NewsListRecyclerViewAdapter(newsFullList, this)
+        recyclerViewHeadLine.setHasFixedSize(true)
+        recyclerViewHeadLine.layoutManager = LinearLayoutManager(activity)
+        recyclerViewHeadLine.adapter = newsAdapter
+    }
+
+    private fun initScrolling(){
+        recyclerViewHeadLine.addOnScrollListener(object :RecyclerView.OnScrollListener(){
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
+
+                if (!isLoading && !isFinished) {
+
+                    //start loading new item set 3 items before the last
+                    if (linearLayoutManager.findLastCompletelyVisibleItemPosition()
+                        == newsFullList.size - 3) {
+
+                        loadNewsList()
+                        isLoading = true
+                    }
+                }
+            }
+        })
+    }
+
     //trigger the APi call through ViewModel
     private fun loadNewsList(){
         if (isConnected(activity!!)) {
+            isFinished = false
             swipeToRefreshView.isRefreshing = true
-            viewModel.getNewsList(Constants.api_key, Constants.url_news_api_top_headlines,"", "", "business")
+
+            viewModel.getNewsList(Constants.api_key, Constants.url_news_api_top_headlines,
+                "", "", "business", page)
         }else{
             handleError(null, false)
         }
@@ -82,6 +122,13 @@ class HeadLineFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickList
 
                         if (newsResponse.articles!!.isNotEmpty()) {
                             showNewsList(newsResponse.articles as ArrayList<NewsItem>)
+
+                            //increment the page by 1 after loading content and check whether all the pages are loaded
+                            if (newsResponse.totalResults != null && newsResponse.totalResults/20 + 1 > page) {
+                                page++
+                            }else{
+                                isFinished = true
+                            }
                         } else {
                             viewModel.liveNoNews.value = View.VISIBLE
                         }
@@ -126,10 +173,9 @@ class HeadLineFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickList
     }
 
     private fun showNewsList(newsList: ArrayList<NewsItem>){
-        val newsAdapter = NewsListRecyclerViewAdapter(newsList, this)
-        recyclerViewHeadLine.setHasFixedSize(true)
-        recyclerViewHeadLine.layoutManager = LinearLayoutManager(activity)
-        recyclerViewHeadLine.adapter = newsAdapter
+        newsFullList.addAll(newsList)
+        recyclerViewHeadLine.adapter?.notifyDataSetChanged()
+        isLoading = false
     }
 
     override fun onClickItem(newsItem: NewsItem) {

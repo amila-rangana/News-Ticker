@@ -39,8 +39,8 @@ class NewsListRecyclerViewAdapter(private val mNewsList: ArrayList<NewsItem>,
             val itemView = viewHolder.itemNewsListBinding
             val newsItem = mNewsList[position]
 
-            Glide.with(itemView.root).load(newsItem.urlToImage).placeholder(R.drawable.sample_image)
-                .error(R.drawable.ic_launcher_foreground).into(itemView.imgNewsItem)
+            Glide.with(itemView.root).load(newsItem.urlToImage).placeholder(R.drawable.loader)
+                .error(R.drawable.error_image).into(itemView.imgNewsItem)
             itemView.txtNewsTitle.text = newsItem.title
 
             viewHolder.itemView.setOnClickListener {

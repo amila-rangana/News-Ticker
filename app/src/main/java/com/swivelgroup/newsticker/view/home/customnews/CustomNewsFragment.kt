@@ -11,6 +11,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.swivelgroup.newsticker.R
 import com.swivelgroup.newsticker.databinding.CustomNewsFragmentBinding
@@ -18,7 +19,9 @@ import com.swivelgroup.newsticker.model.NewsItem
 import com.swivelgroup.newsticker.utils.Constants
 import com.swivelgroup.newsticker.utils.PreferenceManager
 import com.swivelgroup.newsticker.utils.isConnected
+import com.swivelgroup.newsticker.utils.showAlertDialog
 import com.swivelgroup.newsticker.view.base.BaseFragment
+import com.swivelgroup.newsticker.view.home.NewsFragmentListener
 import com.swivelgroup.newsticker.view.home.NewsListRecyclerViewAdapter
 import com.swivelgroup.newsticker.view.home.NewsPagerAdapter
 import com.swivelgroup.newsticker.view.newsdetails.NewsDetailsActivity
@@ -30,7 +33,7 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeoutException
 
-class CustomNewsFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickListener {
+class CustomNewsFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickListener, NewsFragmentListener {
 
     companion object {
         fun newInstance() = CustomNewsFragment()
@@ -38,6 +41,11 @@ class CustomNewsFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickLi
 
     private lateinit var viewModel: CustomNewsViewModel
     lateinit var preferenceManager: PreferenceManager
+
+    var page = 1
+    private var isLoading = false
+    private var isFinished = false
+    private var newsFullList = ArrayList<NewsItem>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,26 +64,60 @@ class CustomNewsFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickLi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        showUserPrefs()
         setObservers()
+        initAdapter()
+        initScrolling()
 
         swipeToRefreshView.setOnRefreshListener {
             if (swipeToRefreshView.isRefreshing) {
-                loadNewsList(spinUserPrefs.selectedItem.toString())
+//                showUserPrefs()
+                page = 1
+                newsFullList.clear()
+                if (preferenceManager.getPref().size > 0) {
+                    loadNewsList(spinUserPrefs.selectedItem.toString())
+                }else{
+                    loadNewsList("")
+                }
             }
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        loadNewsList(spinUserPrefs.selectedItem.toString())
+    private fun initAdapter(){
+        val newsAdapter = NewsListRecyclerViewAdapter(newsFullList, this)
+        recyclerViewEverything.setHasFixedSize(true)
+        recyclerViewEverything.layoutManager = LinearLayoutManager(activity)
+        recyclerViewEverything.adapter = newsAdapter
+    }
+
+    private fun initScrolling(){
+        recyclerViewEverything.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
+
+                if (!isLoading && !isFinished) {
+
+                    //start loading new item set 3 items before the last
+                    if (linearLayoutManager.findLastCompletelyVisibleItemPosition()
+                        == newsFullList.size - 3) {
+
+                        loadNewsList(spinUserPrefs.selectedItem.toString())
+                        isLoading = true
+                    }
+                }
+            }
+        })
     }
 
     private fun loadNewsList(keyword: String){
         if (isConnected(activity!!)) {
+            isFinished = false
             swipeToRefreshView.isRefreshing = true
+
             viewModel.getNewsList(Constants.api_key, Constants.url_news_api_everything,
-                keyword, "", "")
+                keyword, "", "", page)
         }else{
             handleError(null, false)
         }
@@ -93,6 +135,13 @@ class CustomNewsFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickLi
 
                         if (newsResponse.articles!!.isNotEmpty()) {
                             showNewsList(newsResponse.articles as ArrayList<NewsItem>)
+
+                            //increment the page by 1 after loading content and check whether all the pages are loaded
+                            if (newsResponse.totalResults != null && newsResponse.totalResults/20 + 1 > page) {
+                                page++
+                            }else{
+                                isFinished = true
+                            }
                         } else {
                             viewModel.liveNoNews.value = View.VISIBLE
                         }
@@ -108,10 +157,9 @@ class CustomNewsFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickLi
     }
 
     private fun showNewsList(newsList: ArrayList<NewsItem>){
-        val newsAdapter = NewsListRecyclerViewAdapter(newsList, this)
-        recyclerViewEverything.setHasFixedSize(true)
-        recyclerViewEverything.layoutManager = LinearLayoutManager(activity)
-        recyclerViewEverything.adapter = newsAdapter
+        newsFullList.addAll(newsList)
+        recyclerViewEverything.adapter?.notifyDataSetChanged()
+        isLoading = false
     }
 
     private fun showUserPrefs(){
@@ -126,6 +174,8 @@ class CustomNewsFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickLi
             }
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                page = 1
+                newsFullList.clear()
                 loadNewsList(spinUserPrefs.selectedItem.toString())
             }
         }
@@ -154,8 +204,10 @@ class CustomNewsFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickLi
 
         val snackBar =
             Snackbar.make(containerView, errorMessage, Snackbar.LENGTH_INDEFINITE)
-        snackBar.setAction("Retry") {
-            loadNewsList("")
+        snackBar.setAction(getString(R.string.text_retry)) {
+            if (spinUserPrefs.isSelected) {
+                loadNewsList(spinUserPrefs.selectedItem.toString())
+            }
         }
         snackBar.show()
     }
@@ -168,5 +220,14 @@ class CustomNewsFragment : BaseFragment(), NewsListRecyclerViewAdapter.OnClickLi
         val intent = Intent(activity, NewsDetailsActivity::class.java)
         intent.putExtra(Constants.extra_news_item, newsItem)
         startActivity(intent)
+    }
+
+    override fun updateData() {
+        if (preferenceManager.getPref().size > 0) {
+            showUserPrefs()
+//            loadNewsList(spinUserPrefs.selectedItem.toString())
+        }else{
+            showAlertDialog(activity!!, "Info", getString(R.string.error_no_user_prefs))
+        }
     }
 }

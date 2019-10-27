@@ -1,6 +1,5 @@
 package com.swivelgroup.newsticker.api.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.swivelgroup.newsticker.BuildConfig
@@ -13,11 +12,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-
-
-
 
 class NewsRepositoryImpl: NewsRepository {
 
@@ -36,12 +31,13 @@ class NewsRepositoryImpl: NewsRepository {
         path:String,
         query: String,
         country: String,
-        category: String
+        category: String,
+        page:Int
     ): LiveData<NewsBaseResponse> {
 
         val newsLiveData = MutableLiveData<NewsBaseResponse>()
         val call = apiService.getNewsList(
-            getRequestHeaders(), path, query, country, category)
+            getRequestHeaders(), path, query, country, category, page)
 
         val baseResponse = NewsBaseResponse()
         call.enqueue(object : Callback<NewsResponse> {

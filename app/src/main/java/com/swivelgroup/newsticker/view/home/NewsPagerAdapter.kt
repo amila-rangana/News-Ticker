@@ -7,30 +7,23 @@ import com.swivelgroup.newsticker.view.home.customnews.CustomNewsFragment
 import com.swivelgroup.newsticker.view.home.headlinenews.HeadLineFragment
 import com.swivelgroup.newsticker.view.home.profile.ProfileFragment
 
-class NewsPagerAdapter(fragmentManager: FragmentManager) :
+class NewsPagerAdapter(fragmentManager: FragmentManager, val targetFragment: NewsFragment) :
     FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
                 val fragment = HeadLineFragment()
-//                val bundle = Bundle()
-//                bundle.putParcelableArrayList(Constants.data_appointments, mApppointmentList.upcomingList)
-//                fragment.arguments = bundle
                 fragment
             }
             1 -> {
                 val fragment = CustomNewsFragment()
-//                val bundle = Bundle()
-//                bundle.putParcelableArrayList(Constants.data_appointments, mApppointmentList.ongoingList)
-//                fragment.arguments = bundle
+                targetFragment.newsFragmentListener = fragment
+
                 fragment
             }
             else -> {
                 val fragment = ProfileFragment()
-//                val bundle = Bundle()
-//                bundle.putParcelableArrayList(Constants.data_appointments, mApppointmentList.pastList)
-//                fragment.arguments = bundle
                 fragment
             }
         }
@@ -46,7 +39,7 @@ class NewsPagerAdapter(fragmentManager: FragmentManager) :
                 "Head Lines"
             }
             1 -> {
-                "Custom News"
+                "Custom"
             }
             else -> {
                 "Profile"

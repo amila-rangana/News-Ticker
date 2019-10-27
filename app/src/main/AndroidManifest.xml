@@ -13,7 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".view.newsdetails.NewsDetailsActivity"></activity>
-        <activity android:name=".view.splash.SplashActivity">
+        <activity android:name=".view.splash.SplashActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

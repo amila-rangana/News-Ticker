@@ -10,6 +10,7 @@ import com.swivelgroup.newsticker.R
 import com.swivelgroup.newsticker.databinding.NewsDetailsFragmentBinding
 import com.swivelgroup.newsticker.model.NewsItem
 import com.swivelgroup.newsticker.utils.Constants
+import com.swivelgroup.newsticker.utils.getDateString
 import kotlinx.android.synthetic.main.news_details_fragment.*
 
 class NewsDetailsFragment : Fragment() {
@@ -57,7 +58,7 @@ class NewsDetailsFragment : Fragment() {
 
     private fun showNewsDetails(newsItem: NewsItem){
         viewModel.liveNewsDetails.value = newsItem.description
-        viewModel.livePublishedTime.value = newsItem.publishedAt
+        viewModel.livePublishedTime.value = getDateString(newsItem.publishedAt!!)
         viewModel.liveFullUrl.value = getString(R.string.text_open_full_news)
         viewModel.liveTitle.value = newsItem.title
         viewModel.liveImage.value = newsItem.urlToImage
