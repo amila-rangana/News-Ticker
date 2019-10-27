@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="boxedTextFieldGrey" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/bg_color_news_text</item>
+        <item name="android:colorControlActivated">@color/font_color_light_grey</item>
+        <item name="android:textColorHint">@color/font_color_light_grey</item>
+        <item name="hintTextAppearance">@style/TextInputLayoutTextAppearance</item>
+    </style>
+</resources>

@@ -3,4 +3,11 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="font_color_white">#ffffff</color>
+    <color name="font_color_splash">#55ffffff</color>
+    <color name="font_color_blue">#0000ff</color>
+    <color name="font_color_light_grey">#ffacaeb0</color>
+
+    <color name="bg_color_news_text">#55008577</color>
 </resources>

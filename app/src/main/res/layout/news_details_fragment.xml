@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="com.swivelgroup.newsticker.utils.ImageViewBindingUtil" />
+        <variable
+            name="viewModel"
+            type="com.swivelgroup.newsticker.view.newsdetails.NewsDetailsViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/margin_5"
+        android:background="@android:color/white"
+        tools:context="com.swivelgroup.newsticker.view.newsdetails.NewsDetailsFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imgNewsItem"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                app:setImage="@{viewModel.liveImage}"
+                android:scaleType="centerCrop"
+                android:src="@drawable/sample_image"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView android:id="@+id/txtNewsTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="@{viewModel.liveTitle}"
+                android:background="@color/bg_color_news_text"
+                style="@style/TitleText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/imgNewsItem"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/txtPublishedTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.livePublishedTime}"
+            android:layout_marginTop="@dimen/margin_10"
+            app:layout_constraintTop_toBottomOf="@id/layoutImage"/>
+
+        <TextView
+            android:id="@+id/txtNewsUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/font_color_blue"
+            android:text="@{viewModel.liveFullUrl}"
+            android:layout_marginTop="@dimen/margin_10"
+            app:layout_constraintTop_toBottomOf="@id/txtPublishedTime"/>
+
+        <TextView
+            android:id="@+id/txtNewsDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.liveNewsDetails}"
+            android:layout_marginTop="@dimen/margin_10"
+            app:layout_constraintTop_toBottomOf="@id/txtNewsUrl"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

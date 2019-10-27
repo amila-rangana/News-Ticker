@@ -8,4 +8,32 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!--style_view_header-->
+    <style name="TitleText">
+        <item name="android:textColor">@color/font_color_white</item>
+        <item name="android:textSize">@dimen/font_size_small</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!--style_view_header-->
+    <style name="TitleTextSplash">
+        <item name="android:textColor">@color/font_color_splash</item>
+        <item name="android:textSize">@dimen/font_size_large</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!--outlined text view-->
+    <style name="boxedTextFieldGrey" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/bg_color_news_text</item>
+        <item name="android:textColorHint">@color/font_color_light_grey</item>
+        <item name="hintTextAppearance">@style/TextInputLayoutTextAppearance</item>
+    </style>
+
+    <style name="TextInputLayoutTextAppearance" parent="TextAppearance.AppCompat">
+        <!-- Floating label appearance here -->
+        <item name="android:textColor">@color/font_color_light_grey</item>
+    </style>
+
 </resources>

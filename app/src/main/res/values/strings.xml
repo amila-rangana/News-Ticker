@@ -1,3 +1,31 @@
 <resources>
     <string name="app_name">NewsTicker</string>
+    <string name="txt_news_ticker">News Ticker</string>
+
+    <!-- error messages-->
+    <string name="error_no_connection">No internet connection.</string>
+    <string name="error_failed_to_connect_to_server">Failed to connect server.</string>
+    <string name="error_timeout">It takes longer than usual</string>
+    <string name="error_common">Something went wrong</string>
+    <string name="text_news_ticker">News Ticker</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="text_open_full_news">Open Full News</string>
+    <string name="text_hint_username">Username</string>
+    <string name="text_hint_add_preferences">Add Preferences</string>
+    <string name="txt_register">Register</string>
+    <string name="iext_add">Add</string>
+    <string name="text_saved">Saved successfully</string>
+
+    <!-- error messages -->
+    <string name="error_api_key_disabled">Your API key has been disabled</string>
+    <string name="error_api_key_exhausted">Your API key has no more requests available</string>
+    <string name="error_api_key_invalid">Your API key hasn\'t been entered correctly. Double check it and try again</string>
+    <string name="error_api_key_missing">Your API key is missing from the request. Append it to the request with one of these </string>
+    <string name="error_parameter_invalid">You\'ve included a parameter in your request which is currently not supported. Check the message property for more details</string>
+    <string name="error_parameter_missing">Required parameters are missing from the request and it cannot be completed. Check the message property for more details</string>
+    <string name="error_rate_limited">You have been rate limited. Back off for a while before trying the request again</string>
+    <string name="error_sources_too_many">You have requested too many sources in a single request. Try splitting the request into 2 smaller requests.</string>
+    <string name="error_sources_does_not_exist">You have requested a source which does not exist</string>
+    <string name="error_unexpected">This shouldn\'t happen, and if it does then it\'s our fault, not yours. Try the request again shortly</string>
 </resources>
