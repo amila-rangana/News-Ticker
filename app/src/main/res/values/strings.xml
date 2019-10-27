@@ -28,6 +28,6 @@
     <string name="error_sources_too_many">You have requested too many sources in a single request. Try splitting the request into 2 smaller requests.</string>
     <string name="error_sources_does_not_exist">You have requested a source which does not exist</string>
     <string name="error_unexpected">This shouldn\'t happen, and if it does then it\'s our fault, not yours. Try the request again shortly</string>
-    <string name="error_no_user_prefs">Need a key word to load news. please navigate to profile, dd a user preference and come back</string>
+    <string name="error_no_user_prefs">Need a key word to load news. please navigate to profile, add a user preference and come back</string>
     <string name="text_retry">Retry</string>
 </resources>
